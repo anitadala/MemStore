@@ -81,17 +81,31 @@ The project includes unit tests covering:
 Testing ensures correctness and prevents regressions.
 
 📦 Project Structure
-memstore/
- ├── src/
- │   ├── store/
- │   │   ├── MemStore.java
- │   │   ├── Entry.java
- │   └── exception/
- ├── test/
- │   └── MemStoreTest.java
- ├── README.md
- └── DESIGN.md
+## 📦 Project Structure
 
+```text
+memstore/
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       └── com/
+│   │           └── anita/
+│   │               └── memstore/
+│   │                   ├── MemStore.java
+│   │                   ├── Entry.java
+│   │                   └── exception/
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── anita/
+│                   └── memstore/
+│                       └── MemStoreTest.java
+├── README.md
+├── DESIGN.md
+├── .gitignore
+└── pom.xml
+
+```
 ▶️ Usage Example
   MemStore<String, String> store = new MemStore<>();
 
