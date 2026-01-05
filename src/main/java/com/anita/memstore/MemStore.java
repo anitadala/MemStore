@@ -7,7 +7,7 @@ public class MemStore <K,V> {
     private final Map<K,Entry<V>> store;
 
     public MemStore(){
-        this.store = new HashMap<>;
+        this.store = new HashMap<>();
     }
     //Inserts or updates a key-value pair.
     public void put(K key,V value){
@@ -31,14 +31,17 @@ public class MemStore <K,V> {
             throw new IllegalArgumentException("Key can not be null");
         }
     }
-}
-public static void main(String[] args) {
-    MemStore<String, String> store = new MemStore<>();
+    public static void main(String[] args) {
+        MemStore<String, String> store = new MemStore<>();
 
-    store.put("user1", "Anita");
-    System.out.println(store.get("user1")); // Anita
+        store.put("user1", "Anita ");
+        store.put("user2", "Kumari");
+        System.out.println(store.get("user1")); // Anita
 
-//    store.delete("user1");
-//    System.out.println(store.get("user1")); // null
+        store.delete("user1");
+        System.out.println(store.get("user1")); //null
+        System.out.println(store.get("user2")); // kumari
+    }
 }
+
 
