@@ -10,15 +10,26 @@ public class MemStore <K,V> {
         this.store = new HashMap<>();
     }
     //Inserts or updates a key-value pair.
-    public void put(K key,V value){
+    public void put(K key,V value, long ttlMillis){
         validateKey(key);
-        store.put(key,new Entry<>(value));
+        if(ttlMillis<=0){
+            throw new IllegalArgumentException("TTL must be greater than zero");
+        }
+        long expiryTime = System.currentTimeMillis()+ttlMillis;
+        store.put(key,new Entry<>(value,expiryTime));
     }
     // Retrieves value for the given key, return null if key does not exist
     public V get(K key){
         validateKey(key);
         Entry<V> entry = store.get(key);
-        return entry!=null ? entry.getValue() : null;
+        if (entry == null) {
+            return null;
+        }
+        if(entry.isExpired()){
+            store.remove(key);
+            return null;
+        }
+        return entry.getValue();
     }
     //Deletes the given key from store.
     public boolean delete(K key){
@@ -31,15 +42,22 @@ public class MemStore <K,V> {
             throw new IllegalArgumentException("Key can not be null");
         }
     }
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         MemStore<String, String> store = new MemStore<>();
 
-        store.put("user1", "Anita ");
-        store.put("user2", "Kumari");
+        store.put("user1", "Anita ",1000);
+        store.put("user2", "Kumari",3000);
         System.out.println(store.get("user1")); // Anita
 
         store.delete("user1");
         System.out.println(store.get("user1")); //null
+        System.out.println(store.get("user2")); // kumari
+        System.out.println("<=== TTL TEST ===>");
+        store.put("session", "active", 2000); // 2 seconds TTL
+        System.out.println("Immediately: " + store.get("session")); // active
+        Thread.sleep(2500);
+        System.out.println("After expiry: " + store.get("session")); //null
+
         System.out.println(store.get("user2")); // kumari
     }
 }
