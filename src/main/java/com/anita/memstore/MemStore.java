@@ -9,7 +9,11 @@ public class MemStore <K,V> {
     public MemStore(){
         this.store = new HashMap<>();
     }
-    //Inserts or updates a key-value pair.
+    public void put(K key,V value){
+        validateKey(key);
+        store.put(key,new Entry<>(value));
+    }
+    //Inserts or updates a key-value pair with ttl given
     public void put(K key,V value, long ttlMillis){
         validateKey(key);
         if(ttlMillis<=0){
@@ -42,24 +46,24 @@ public class MemStore <K,V> {
             throw new IllegalArgumentException("Key can not be null");
         }
     }
-    public static void main(String[] args) throws InterruptedException {
-        MemStore<String, String> store = new MemStore<>();
-
-        store.put("user1", "Anita ",1000);
-        store.put("user2", "Kumari",3000);
-        System.out.println(store.get("user1")); // Anita
-
-        store.delete("user1");
-        System.out.println(store.get("user1")); //null
-        System.out.println(store.get("user2")); // kumari
-        System.out.println("<=== TTL TEST ===>");
-        store.put("session", "active", 2000); // 2 seconds TTL
-        System.out.println("Immediately: " + store.get("session")); // active
-        Thread.sleep(2500);
-        System.out.println("After expiry: " + store.get("session")); //null
-
-        System.out.println(store.get("user2")); // kumari
-    }
+//    public static void main(String[] args) throws InterruptedException {
+//        MemStore<String, String> store = new MemStore<>();
+//
+//        store.put("user1", "Anita ",1000);
+//        store.put("user2", "Kumari",3000);
+//        System.out.println(store.get("user1")); // Anita
+//
+//        store.delete("user1");
+//        System.out.println(store.get("user1")); //null
+//        System.out.println(store.get("user2")); // kumari
+//        System.out.println("<=== TTL TEST ===>");
+//        store.put("session", "active", 2000); // 2 seconds TTL
+//        System.out.println("Immediately: " + store.get("session")); // active
+//        Thread.sleep(2500);
+//        System.out.println("After expiry: " + store.get("session")); //null
+//
+//        System.out.println(store.get("user2")); // kumari
+//    }
 }
 
 
