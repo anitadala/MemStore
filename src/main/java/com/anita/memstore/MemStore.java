@@ -46,24 +46,23 @@ public class MemStore <K,V> {
             throw new IllegalArgumentException("Key can not be null");
         }
     }
-//    public static void main(String[] args) throws InterruptedException {
-//        MemStore<String, String> store = new MemStore<>();
-//
-//        store.put("user1", "Anita ",1000);
-//        store.put("user2", "Kumari",3000);
-//        System.out.println(store.get("user1")); // Anita
-//
-//        store.delete("user1");
-//        System.out.println(store.get("user1")); //null
-//        System.out.println(store.get("user2")); // kumari
-//        System.out.println("<=== TTL TEST ===>");
-//        store.put("session", "active", 2000); // 2 seconds TTL
-//        System.out.println("Immediately: " + store.get("session")); // active
-//        Thread.sleep(2500);
-//        System.out.println("After expiry: " + store.get("session")); //null
-//
-//        System.out.println(store.get("user2")); // kumari
-//    }
+
+    //ContainsKey() functionality
+    public boolean containsKey(K key){
+        validateKey(key);
+
+        Entry<V> entry = store.get(key);
+        if(entry==null){
+            return false;
+        }
+        if(entry.isExpired()){
+            store.remove(key);
+            return false;
+        }
+        return true;
+    }
+
+
 }
 
 

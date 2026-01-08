@@ -49,4 +49,37 @@ class MemStoreTest{
         assertThrows(IllegalArgumentException.class,
                 () -> store.put("key", "value", 0));
     }
+
+    @Test
+    void containsKeyShouldReturnTrueForValidKey(){
+        MemStore<String, String> store = new MemStore<>();
+        store.put("session", "active", 2000);
+
+        assertTrue(store.containsKey("session"));
+    }
+
+    @Test
+    void containsKeyShouldReturnFalseForMissingKey(){
+        MemStore<String, String> store = new MemStore<>();
+        store.put("session", "active");
+        assertFalse(store.containsKey("user"));
+    }
+
+    @Test
+    void containsKeyShouldReturnFalseForExpiredKey() throws InterruptedException {
+        MemStore<String,String> store = new MemStore<>();
+        store.put("key1","value1",1000);
+        Thread.sleep(1500);
+
+        assertFalse(store.containsKey("key1"));
+    }
+
+    @Test
+    void containsKeyShouldLazyEvictExpiredKey() throws InterruptedException {
+        MemStore<String,String> store = new MemStore<>();
+        store.put("key1","value1",1000);
+        Thread.sleep(1500);
+        assertFalse(store.containsKey("key1"));
+        assertNull(store.get("key1")); // it confirms eviction
+    }
 }
