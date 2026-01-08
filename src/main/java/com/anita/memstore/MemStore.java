@@ -1,13 +1,12 @@
 package com.anita.memstore;
-
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MemStore <K,V> {
     private final Map<K,Entry<V>> store;
 
     public MemStore(){
-        this.store = new HashMap<>();
+        this.store = new ConcurrentHashMap<>();
     }
     public void put(K key,V value){
         validateKey(key);
@@ -25,15 +24,10 @@ public class MemStore <K,V> {
     // Retrieves value for the given key, return null if key does not exist
     public V get(K key){
         validateKey(key);
-        Entry<V> entry = store.get(key);
-        if (entry == null) {
-            return null;
-        }
-        if(entry.isExpired()){
-            store.remove(key);
-            return null;
-        }
-        return entry.getValue();
+        Entry<V> entry = store.computeIfPresent(key, (k, e) ->
+                e.isExpired() ? null : e
+        );
+        return entry != null ? entry.getValue() : null;
     }
     //Deletes the given key from store.
     public boolean delete(K key){
